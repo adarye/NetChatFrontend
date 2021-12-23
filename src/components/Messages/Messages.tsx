@@ -1,6 +1,7 @@
 import React from 'react'
 import { Segment, Comment } from 'semantic-ui-react';
 import {MessagesHeader} from './MessagesHeader';
+import {MessagesForm} from './MessagesForm';
 
 export const Messages = () => {
     return (
@@ -9,6 +10,7 @@ export const Messages = () => {
         <Segment>
             <Comment.Group></Comment.Group>
         </Segment>
+        <MessagesForm />
     </React.Fragment>
     )
 }
