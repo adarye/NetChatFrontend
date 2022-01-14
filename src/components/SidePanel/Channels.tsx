@@ -1,25 +1,20 @@
-import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useEffect,  useContext} from "react";
 import { Icon, Menu } from "semantic-ui-react";
 import { IChannel } from "../../models/channels";
-import { ChannelForm } from "./ChannelForm";
+import  ChannelForm  from "./ChannelForm";
 import { ChannelItem } from "./ChannelItem";
-import agent from '../../api/agent';
+import ChannelStore from "../../stores/ChannelStore"; 
+import {observer} from "mobx-react-lite";
 
 
 const Channels = () => {
-  const [myChannels, setChannels] = useState<IChannel[]>([]);
-  const [selectedModal, setModal] = useState(false);
+  // const [myChannels, setChannels] = useState<IChannel[]>([]);
+  const channelStore = useContext(ChannelStore);
+  const {channels} = channelStore;
 
   useEffect(() => {
-   agent.Channels.list().then((res) => {
-      setChannels(res);
-    });
-  }, []);
-
-  const openModal = () => setModal(true);
-
-  const closeModal = () => setModal(false);
+  channelStore.loadChannels();
+  }, [channelStore]);
 
   const displayChannels = (channels: IChannel[]) => {
     return (
@@ -30,13 +25,7 @@ const Channels = () => {
     );
   };
 
-  const addChannel = (channel: IChannel) => {
-   agent.Channels.create(channel)
-    .then((res) => {
-    console.log(channel);
-    setChannels([...myChannels, channel]);
-    })
-  };
+
 
   return (
     <React.Fragment>
@@ -45,17 +34,14 @@ const Channels = () => {
           <span>
             <Icon name="exchange" /> CHANNELS
           </span>{" "}
-          ({myChannels.length})<Icon name="add" onClick={openModal} />
+          ({channels.length})<Icon name="add" onClick={()=>channelStore.showModal(true)} />
         </Menu.Item>
-        {displayChannels(myChannels)}
+        {displayChannels(channels)}
       </Menu.Menu>
       <ChannelForm
-        selectedModal={selectedModal}
-        closeModal={closeModal}
-        addChannel={addChannel}
       ></ChannelForm>
     </React.Fragment>
   );
 };
 
-export default Channels;
+export default observer(Channels);
